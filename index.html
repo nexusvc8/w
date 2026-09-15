@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Benvixa - Digital Work & Task Hub</title>
+    
+    <!-- Icons & Fonts -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: rgba(79, 70, 229, 0.12);
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --accent-light: rgba(16, 185, 129, 0.12);
+            --gold: #f59e0b;
+            --gold-light: rgba(245, 158, 11, 0.12);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.12);
+            
+            --bg-body: #0b0f19;
+            --surface: #111827;
+            --surface-card: #162032;
+            --surface-hover: #1f2d45;
+            --border: #1f2937;
+            --border-light: rgba(255, 255, 255, 0.08);
+            
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --text-dim: #6b7280;
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --radius-xl: 24px;
+            --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            height: 100vh;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .hidden { display: none !important; }
+
+        /* Notification Toast */
+        #notification-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 50px;
+            color: #fff;
+            font-size: 13.5px;
+            font-weight: 700;
+            z-index: 99999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+        }
+        #notification-box.success { background: linear-gradient(135deg, #10b981, #059669); border: 1px solid #34d399; }
+        #notification-box.danger { background: linear-gradient(135deg, #ef4444, #dc2626); border: 1px solid #f87171; }
+        #notification-box.hidden { top: -80px; opacity: 0; }
+
+        /* Mobile Menu Toggle */
+        #menu-toggle {
+            display: none;
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 1100;
+            font-size: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 260px;
+            height: 100%;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 22px 14px;
+            transition: var(--transition);
+            z-index: 1050;
+            flex-shrink: 0;
+        }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 8px 20px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            color: #ffffff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .menu-bar {
+            margin-top: 18px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-y: auto;
+        }
+
+        .menu-links { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+        .menu-links li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 13.5px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .menu-links li a .icon { font-size: 20px; }
+        .menu-links li a:hover {
+            background-color: var(--surface-hover);
+            color: #fff;
+        }
+        .menu-links li a.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+        }
+
+        /* Main Content Container */
+        .main-content {
+            flex-grow: 1;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 30px;
+            background: var(--bg-body);
+        }
+
+        .content-section {
+            max-width: 960px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 28px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .section-header {
+            margin-bottom: 22px;
+        }
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.3px;
+        }
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 13.5px;
+            margin-top: 4px;
+        }
+
+        /* Form Controls */
+        label {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            background: var(--surface-card);
+            color: #fff;
+            outline: none;
+            transition: var(--transition);
+        }
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        button.btn-primary {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 14.5px;
+            font-weight: 700;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+        }
+        button.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        button:disabled { background: #374151 !important; color: #9ca3af !important; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* Dashboard Overview */
+        .dash-hero-card {
+            background: linear-gradient(135deg, #1e1b4b 0%, #1e293b 100%);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .dash-hero-bal-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #a5b4fc;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .dash-hero-bal-val {
+            font-size: 34px;
+            font-weight: 900;
+            color: #fff;
+            margin: 4px 0 6px;
+        }
+        .dash-action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .dash-btn {
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+        .dash-btn.dep { background: var(--accent); color: #042f1f; }
+        .dash-btn.wth { background: #334155; color: #fff; }
+        .dash-btn:hover { transform: translateY(-2px); filter: brightness(1.15); }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .stat-card .stat-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .stat-card .stat-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        /* Dismissible Notice Banner */
+        .notice-banner {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            color: #fbbf24;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* WhatsApp Card */
+        .whatsapp-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 78, 59, 0.25));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .whatsapp-card:hover { transform: translateY(-2px); border-color: #34d399; }
+
+        /* Work Packages & Tasks */
+        .investment-plans, .task-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        .plan-card, .task-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+        .plan-card:hover, .task-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .plan-card h3, .task-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .plan-price {
+            font-size: 26px;
+            font-weight: 900;
+            color: #818cf8;
+            margin: 8px 0;
+        }
+        .plan-meta {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        /* Modern Tables */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            text-align: left;
+        }
+        th {
+            background-color: var(--surface-card);
+            color: var(--text-muted);
+            font-weight: 700;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--surface-hover); }
+
+        /* Referral Box */
+        .referral-box {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            padding: 14px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 8px;
+            word-break: break-all;
+        }
+        .referral-box button {
+            width: auto;
+            padding: 8px 16px;
+            font-size: 12.5px;
+            white-space: nowrap;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+        .modal-overlay:not(.hidden) { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+        .modal-btn.cancel { background: #374151; color: #fff; }
+
+        @media (max-width: 860px) {
+            #menu-toggle { display: flex; }
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                height: 100%;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            }
+            .sidebar.open { left: 0; }
+            .main-content { padding: 75px 14px 24px 14px; }
+            .content-section { padding: 18px; }
+            .dash-hero-bal-val { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="notification-box" class="hidden"></div>
+    <div id="menu-toggle" class="hidden"><i class='bx bx-menu'></i></div>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="brand-box">
+            <div class="brand-icon"><i class='bx bx-briefcase-alt-2'></i></div>
+            <span class="brand-title">Benvixa Hub</span>
+        </div>
+        <div class="menu-bar">
+            <ul class="menu-links">
+                <li><a href="#" class="active" onclick="showSection('home', this)"><i class='bx bx-grid-alt icon'></i><span>Overview</span></a></li>
+                <li><a href="#" onclick="showSection('deposit', this)"><i class='bx bx-wallet icon'></i><span>Add Funds</span></a></li>
+                <li><a href="#" onclick="showSection('invest', this)"><i class='bx bx-layer icon'></i><span>Work Packages</span></a></li>
+                <li><a href="#" onclick="showSection('task', this)"><i class='bx bx-check-shield icon'></i><span>Daily Tasks</span></a></li>
+                <li><a href="#" onclick="showSection('send', this)"><i class='bx bx-money-withdraw icon'></i><span>Payout Request</span></a></li>
+                <li><a href="#" onclick="showSection('history', this)"><i class='bx bx-receipt icon'></i><span>Activity History</span></a></li>
+                <li><a href="#" onclick="showSection('team', this)"><i class='bx bx-group icon'></i><span>Affiliate Team</span></a></li>
+                <li><a href="#" onclick="showSection('profile', this)"><i class='bx bx-user icon'></i><span>My Account</span></a></li>
+                <li><a href="#" onclick="logoutUser()"><i class='bx bx-log-out icon'></i><span>Sign Out</span></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Workspace -->
+    <section class="main-content">
+        <!-- Auth Section (Pre-rendered for zero flash) -->
+        <div id="auth-section" style="max-width: 420px; margin: 40px auto;">
+            <div id="login-container" class="content-section">
+                <div class="section-header" style="text-align: center;">
+                    <h2>Welcome to Benvixa Hub</h2>
+                    <p>Sign in to access your digital workspace</p>
+                </div>
+                <label>Phone Number</label>
+                <input type="tel" id="login-number" inputmode="numeric" placeholder="03XXXXXXXXX">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="••••••••">
+                <button class="btn-primary" id="btn-login-submit" onclick="loginUser()">Sign In</button>
+                <p style="text-align:center; margin-top:18px; font-size:13.5px; color:var(--text-muted);">
+                    Don't have an account? <a href="#" onclick="toggleForms()" style="color:var(--primary); font-weight:700; text-decoration:none;">Create Account</a>
+                </p>
+            </div>
+
+            <div id="signup-container" class="content-section hidden">
+                <div class="section-header" style="text-align: center;">
+                    <h2>Create Member Account</h2>
+                    <p>Join the digital work network</p>
+                </div>
+                <label>Email Address</label>
+                <input type="email" id="signup-email" placeholder="name@example.com">
+                <label>Phone Number</label>
+                <input type="tel" id="signup-number" inputmode="numeric" placeholder="03XXXXXXXXX">
+                <label>Password</label>
+                <input type="password" id="signup-password" placeholder="Create strong password">
+                <label>Referral Sponsor ID (Optional)</label>
+                <input type="text" id="signup-referral" placeholder="Sponsor Code">
+                <button class="btn-primary" id="btn-signup-submit" onclick="signupUser()">Register Account</button>
+                <p style="text-align:center; margin-top:18px; font-size:13.5px; color:var(--text-muted);">
+                    Already registered? <a href="#" onclick="toggleForms()" style="color:var(--primary); font-weight:700; text-decoration:none;">Sign In</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Dashboard Container (Pre-rendered in DOM) -->
+        <div id="dashboard-container" class="hidden">
+            <!-- Overview Section -->
+            <div id="home-content" class="content-section">
+                <div id="system-notice" class="notice-banner">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <i class='bx bx-info-circle' style="font-size:18px;"></i>
+                        <span>System update: Fast 24-hour payouts and instant task verification active.</span>
+                    </div>
+                    <i class='bx bx-x' style="cursor:pointer; font-size:18px;" onclick="document.getElementById('system-notice').style.display='none'"></i>
+                </div>
+
+                <!-- Upgraded Dashboard Hero -->
+                <div class="dash-hero-card">
+                    <div>
+                        <span class="dash-hero-bal-title">Available Wallet Balance</span>
+                        <div class="dash-hero-bal-val mono" id="current-balance">Rs. 0.00</div>
+                        <span style="font-size:12px; color:var(--text-muted);">Account: <strong id="user-email-display" style="color:#fff;">-</strong></span>
+                    </div>
+                    <div class="dash-action-buttons">
+                        <button class="dash-btn dep" onclick="showSection('deposit', document.querySelector('a[onclick*=\'deposit\']'))"><i class='bx bx-plus-circle'></i> Add Funds</button>
+                        <button class="dash-btn wth" onclick="showSection('send', document.querySelector('a[onclick*=\'send\']'))"><i class='bx bx-money-withdraw'></i> Payout</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Active Work Packages</span>
+                        <div class="stat-val mono" id="dash-active-packages">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Affiliate Commission</span>
+                        <div class="stat-val mono" id="dash-affiliate-earnings" style="color:var(--accent);">Rs. 0.00</div>
+                    </div>
+                </div>
+
+                <a href="https://wa.me/923262550724" target="_blank" class="whatsapp-card">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <i class='bx bxl-whatsapp' style="font-size: 32px;"></i>
+                        <div>
+                            <h4 style="margin:0; font-size:14.5px; font-weight:700;">Official Support Desk</h4>
+                            <p style="margin:0; font-size:12px; opacity:0.85;">Need instant help with deposits or tasks? Chat on WhatsApp</p>
+                        </div>
+                    </div>
+                    <i class='bx bx-chevron-right' style="font-size: 22px;"></i>
+                </a>
+            </div>
+
+            <!-- Add Funds / Deposit -->
+            <div id="deposit-content" class="content-section hidden">
+                <div class="section-header">
+                    <h2>Add Funds to Wallet</h2>
+                    <p>Transfer amount to <strong>03262550724</strong> (Easypaisa / JazzCash) and submit details.</p>
+                </div>
+                <label>Amount (PKR)</label>
+                <input type="number" id="deposit-amount" inputmode="decimal" placeholder="Minimum Rs. 20">
+                <label>Payment Channel</label>
+                <select id="payment-method">
+                    <option>Easypaisa</option>
+                    <option>Jazzcash</option>
+                </select>
+                <label>Transaction ID (TRX ID)</label>
+                <input type="text" id="transaction-id" inputmode="numeric" placeholder="e.g. 8472910382">
+                <label>Sender Account / Phone Number</label>
+                <input type="tel" id="sending-number" inputmode="numeric" placeholder="e.g. 03001234567">
+                <button class="btn-primary" id="btn-deposit-submit" onclick="submitDeposit()">Submit Verification</button>
+            </div>
+
+            <!-- Work Packages -->
+            <div id="invest-content" class="content-section hidden">
+                <div class="section-header">
+                    <h2>Work & Task Packages</h2>
+                    <p>Select your tier to unlock daily tasks and rewards.</p>
+                </div>
+                <div id="investment-plans-container" class="investment-plans"></div>
+            </div>
+
+            <!-- Daily Tasks -->
+            <div id="task-content" class="content-section hidden">
+                <div class="section-header">
+                    <h2>Daily Task Activities</h2>
+                    <p>Review and confirm your active task rewards daily.</p>
+                </div>
+                <div id="task-list-container" class="task-list"></div>
+            </div>
+
+            <!-- Payout Section -->
+            <div id="send-content" class="content-section hidden">
+                <div class="section-header">
+                    <h2>Request Payout</h2>
+                    <p>Transfer your accumulated task rewards to your mobile wallet.</p>
+                </div>
+                <label>Payout Amount (PKR)</label>
+                <input type="number" id="withdraw-amount" inputmode="decimal" placeholder="Amount">
+                <label>Payout Method</label>
+                <select id="withdraw-method">
+                    <option>Easypaisa</option>
+                    <option>Jazzcash</option>
+                </select>
+                <label>Account Number / Mobile Number</label>
+                <input type="tel" id="withdraw-account" inputmode="numeric" placeholder="Account Number">
+                <button class="btn-primary" id="btn-withdraw-submit" onclick="submitWithdrawal()">Submit Payout Request</button>
+
+                <div style="margin-top: 20px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background-color: var(--surface-card);">
+                    <h4 style="margin-bottom: 6px; font-size:13.5px; font-weight:700; color: #fff;">Payout Schedule</h4>
+                    <p style="font-size: 12.5px; color: var(--text-muted);">• Operating hours: 9:00 AM – 11:00 PM daily.</p>
+                    <p style="font-size: 12.5px; color: var(--danger); margin-top: 4px;">• Double check account details before submission.</p>
+                </div>
+            </div>
+
+            <!-- History (Investment History Completely Removed as Requested) -->
+            <div id="history-content" class="content-section hidden">
+                <div class="section-header">
+                    <h2>Activity History</h2>
+                    <p>Ledger of wallet deposits and payout requests.</p>
+                </div>
+
+                <h3 style="font-size: 15px; margin: 16px 0 8px 0; color:#fff;">Deposits (Top-ups)</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Timestamp</th><th>Amount</th><th>Method</th><th>Trx ID</th><th>Status</th></tr></thead>
+                        <tbody id="deposit-history-table"></tbody>
+                    </table>
+                </div>
+
+                <h3 style="font-size: 15px; margin: 24px 0 8px 0; color:#fff;">Payouts (Withdrawals)</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Timestamp</th><th>Amount</th><th>Method</th><th>Destination</th><th>Status</th></tr></thead>
+                        <tbody id="withdrawal-history-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Team / Affiliate -->
+            <div id="team-content" class="content-section hidden">
+                <div class="section-header">
+                    <h2>Affiliate & Team Portal</h2>
+                    <p>Share your personal invite link to earn commissions.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Total Commission Earned</span>
+                        <div class="stat-val mono" id="user-referral-earnings" style="color: var(--accent);">Rs. 0.00</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <label>Your Personal Referral Link</label>
+                    <div class="referral-box">
+                        <span id="user-referral-link" class="mono" style="font-size:12.5px; color:var(--text-main);">- - -</span>
+                        <button class="btn-primary" onclick="copyReferralLink()">Copy Link</button>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 15px; margin: 24px 0 8px 0; color:#fff;">Direct Team Members</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>Member Email</th><th>Contact</th><th>Joined</th></tr></thead>
+                        <tbody id="team-members-table"><tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Syncing team...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Profile -->
+            <div id="profile-content" class="content-section hidden">
+                <div class="section-header">
+                    <h2>Account Profile</h2>
+                    <p>Personal credentials and registration info</p>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:14px; font-size:13.5px;">
+                    <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Email:</strong> <span id="profile-email">-</span></div>
+                    <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Phone:</strong> <span id="profile-number">-</span></div>
+                    <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Member Since:</strong> <span id="profile-signup-date">-</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="modal-title" style="font-size: 18px; font-weight: 800;">Confirm Activation</h3>
+            <p id="modal-text" style="font-size: 13.5px; color: var(--text-muted); margin: 12px 0 18px 0;">Are you sure you want to activate this tier?</p>
+            <div class="modal-buttons">
+                <button id="modal-cancel-btn" class="modal-btn cancel btn-primary">Cancel</button>
+                <button id="modal-confirm-btn" class="modal-btn confirm btn-primary">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyB_22L_Pr5gaDJUOqEQFq7Qin13s1bRFOI",
+            authDomain: "benvixa-145f4.firebaseapp.com",
+            projectId: "benvixa-145f4",
+            storageBucket: "benvixa-145f4.firebasestorage.app",
+            messagingSenderId: "326696248017",
+            appId: "1:326696248017:web:98668dc0b75ef313885bf0",
+            databaseURL: "https://benvixa-145f4-default-rtdb.firebaseio.com"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+        let currentUser = null;
+        let countdownIntervals = {};
+
+        const investmentPlans = [
+            { id: 1, name: "Tier 1 Task Pack", invest: 20, daily: 2.1, validity: 60 },
+            { id: 2, name: "Tier 2 Task Pack", invest: 50, daily: 4.1, validity: 60 },
+            { id: 3, name: "Tier 3 Task Pack", invest: 70, daily: 5.9, validity: 60 },
+            { id: 4, name: "Tier 4 Task Pack", invest: 100, daily: 7.7, validity: 60 },
+            { id: 5, name: "Tier 5 Task Pack", invest: 130, daily: 10.1, validity: 60 },
+            { id: 6, name: "Tier 6 Task Pack", invest: 150, daily: 11.1, validity: 60 },
+            { id: 7, name: "Tier 7 Task Pack", invest: 170, daily: 12.3, validity: 60 },
+            { id: 8, name: "Tier 8 Task Pack", invest: 200, daily: 14.3, validity: 60 },
+            { id: 9, name: "Tier 9 Task Pack", invest: 250, daily: 17.9, validity: 60 },
+            { id: 10, name: "Tier 10 Task Pack", invest: 300, daily: 21.4, validity: 60 },
+            { id: 11, name: "Tier 11 Task Pack", invest: 350, daily: 25.1, validity: 60 },
+            { id: 12, name: "Tier 12 Task Pack", invest: 380, daily: 28.1, validity: 60 },
+            { id: 13, name: "Tier 13 Task Pack", invest: 400, daily: 29.1, validity: 60 },
+            { id: 14, name: "Tier 14 Task Pack", invest: 450, daily: 32.1, validity: 60 },
+            { id: 15, name: "Tier 15 Task Pack", invest: 500, daily: 35.7, validity: 60 },
+            { id: 16, name: "Tier 16 Task Pack", invest: 550, daily: 39.3, validity: 60 },
+            { id: 17, name: "Tier 17 Task Pack", invest: 600, daily: 42.9, validity: 60 },
+            { id: 18, name: "Tier 18 Task Pack", invest: 700, daily: 50.1, validity: 60 },
+            { id: 19, name: "Tier 19 Task Pack", invest: 800, daily: 57.2, validity: 60 },
+            { id: 20, name: "Tier 20 Task Pack", invest: 900, daily: 64.3, validity: 60 },
+            { id: 21, name: "Tier 21 Task Pack", invest: 1000, daily: 71.4, validity: 60 },
+            { id: 22, name: "Tier 22 Task Pack", invest: 1200, daily: 85.7, validity: 60 },
+            { id: 23, name: "Tier 23 Task Pack", invest: 1400, daily: 99.9, validity: 60 },
+            { id: 24, name: "Tier 24 Task Pack", invest: 1600, daily: 114.3, validity: 60 },
+            { id: 25, name: "Tier 25 Task Pack", invest: 1800, daily: 128.6, validity: 60 },
+            { id: 26, name: "Tier 26 Task Pack", invest: 2000, daily: 142.9, validity: 60 },
+            { id: 27, name: "Tier 27 Task Pack", invest: 2500, daily: 178.6, validity: 60 },
+            { id: 28, name: "Tier 28 Task Pack", invest: 3000, daily: 214.3, validity: 60 },
+            { id: 29, name: "Tier 29 Task Pack", invest: 4000, daily: 285.8, validity: 60 },
+            { id: 30, name: "Tier 30 Task Pack", invest: 5000, daily: 357.2, validity: 60 },
+            { id: 31, name: "Tier 31 Task Pack", invest: 7000, daily: 500.1, validity: 60 },
+            { id: 32, name: "Tier 32 Task Pack", invest: 9000, daily: 642.9, validity: 60 }
+        ];
+
+        const sidebar = document.querySelector('.sidebar');
+        const menuToggle = document.getElementById('menu-toggle');
+        const authContainer = document.getElementById('auth-section');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+
+        // Online/Offline Listeners
+        window.addEventListener('offline', () => showNotification("Internet connection lost.", "danger"));
+        window.addEventListener('online', () => showNotification("Back online!", "success"));
+
+        function maskNumber(number) {
+            if (!number || number.length < 11) return number || '-';
+            return number.substring(0, 4) + '****' + number.substring(8);
+        }
+
+        // --- Auth State ---
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                authContainer.classList.add('hidden');
+                dashboardContainer.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                setupModalListener();
+                showSection('home', document.querySelector('.sidebar a'));
+                loadUserData(); // Only initial user data loaded
+            } else {
+                currentUser = null;
+                authContainer.classList.remove('hidden');
+                dashboardContainer.classList.add('hidden');
+                menuToggle.classList.add('hidden');
+                if (sidebar.classList.contains('open')) sidebar.classList.remove('open');
+                Object.values(countdownIntervals).forEach(clearInterval);
+                countdownIntervals = {};
+                checkForReferralCodeInURL();
+            }
+        });
+
+        // --- Modal Setup ---
+        const modal = document.getElementById('confirmation-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalText = document.getElementById('modal-text');
+        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+        const modalCancelBtn = document.getElementById('modal-cancel-btn');
+        function hideConfirmation() { modal.classList.add('hidden'); }
+        modalCancelBtn.addEventListener('click', hideConfirmation);
+        modal.addEventListener('click', (e) => { if (e.target === modal) hideConfirmation(); });
+
+        function setupModalListener() {
+            const newConfirmBtn = modalConfirmBtn.cloneNode(true);
+            modalConfirmBtn.parentNode.replaceChild(newConfirmBtn, modalConfirmBtn);
+            newConfirmBtn.addEventListener('click', () => {
+                const planIdToInvest = newConfirmBtn.dataset.planId;
+                if (!planIdToInvest) return;
+                const plan = investmentPlans.find(p => p.id == planIdToInvest);
+                if (!plan) return;
+                
+                newConfirmBtn.disabled = true;
+                newConfirmBtn.innerText = "Activating...";
+
+                const userRef = db.ref('users/' + currentUser.uid);
+                userRef.transaction(currentData => {
+                    if (currentData && currentData.balance >= plan.invest) {
+                        currentData.balance -= plan.invest;
+                        return currentData;
+                    }
+                    return;
+                }, (error, committed) => {
+                    newConfirmBtn.disabled = false;
+                    newConfirmBtn.innerText = "Confirm";
+                    hideConfirmation();
+                    if (error) { 
+                        showNotification("An error occurred. Please try again.", "danger"); 
+                    } else if (committed) {
+                        const invData = { 
+                            userId: currentUser.uid, 
+                            planName: plan.name, 
+                            amount: plan.invest, 
+                            dailyEarning: plan.daily, 
+                            validity: plan.validity, 
+                            status: 'approved', 
+                            date: new Date().toISOString(), 
+                            lastClaimed: 0 
+                        };
+                        db.ref('investments').push(invData).then(() => {
+                            showNotification("Work package activated successfully!");
+                            handleReferralCommission(plan.invest);
+                            showSection('task', document.querySelector("a[onclick*='task']"));
+                        });
+                    } else { 
+                        showNotification("Insufficient balance. Please add funds first.", "danger"); 
+                    }
+                });
+            });
+        }
+
+        // --- UI & Notification Helpers ---
+        function showNotification(message, type = 'success') {
+            const notificationBox = document.getElementById('notification-box');
+            notificationBox.innerHTML = `<i class='bx ${type==='success'?'bx-check-circle':'bx-error-circle'}'></i> ${message}`;
+            notificationBox.className = type;
+            notificationBox.classList.remove('hidden');
+            setTimeout(() => { notificationBox.classList.add('hidden'); }, 3200);
+        }
+
+        // Lazy Loader inside showSection
+        function showSection(sectionId, navLink) {
+            document.querySelectorAll('#dashboard-container > div').forEach(s => s.classList.add('hidden'));
+            const targetSection = document.getElementById(sectionId + '-content');
+            if (targetSection) targetSection.classList.remove('hidden');
+            document.querySelectorAll('.sidebar .menu-links a').forEach(a => a.classList.remove('active'));
+            if(navLink) navLink.classList.add('active');
+            if (window.innerWidth <= 860 && sidebar.classList.contains('open')) sidebar.classList.remove('open');
+
+            // Lazy Load data on tab click
+            if (sectionId === 'invest') loadInvestmentPlans();
+            if (sectionId === 'task') loadTasks();
+            if (sectionId === 'history') loadHistory();
+            if (sectionId === 'team') loadTeamData();
+        }
+
+        function toggleForms() {
+            document.getElementById('login-container').classList.toggle('hidden');
+            document.getElementById('signup-container').classList.toggle('hidden');
+        }
+
+        // --- Data Loading ---
+        function loadUserData() {
+            db.ref('users/' + currentUser.uid).on('value', snap => {
+                const data = snap.val();
+                if (data) {
+                    const formattedBal = `Rs. ${parseFloat(data.balance || 0).toFixed(2)}`;
+                    document.getElementById('current-balance').innerText = formattedBal;
+                    document.getElementById('user-email-display').innerText = data.email || 'Member';
+                    document.getElementById('profile-email').innerText = data.email || '-';
+                    document.getElementById('profile-number').innerText = data.number || '-';
+                    document.getElementById('dash-affiliate-earnings').innerText = `Rs. ${parseFloat(data.referralEarnings || 0).toFixed(2)}`;
+
+                    if (data.signupDate) {
+                        const sDate = new Date(data.signupDate);
+                        document.getElementById('profile-signup-date').innerText = sDate.toLocaleString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
+                    }
+                }
+            });
+
+            // Count Active Packages for Dashboard Hero
+            db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
+                let count = 0;
+                snap.forEach(() => count++);
+                document.getElementById('dash-active-packages').innerText = count;
+            });
+        }
+
+        // --- Authentication Actions ---
+        function signupUser() {
+            const btn = document.getElementById('btn-signup-submit');
+            const email = document.getElementById('signup-email').value.trim();
+            const number = document.getElementById('signup-number').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const referralCode = document.getElementById('signup-referral').value.trim().toUpperCase();
+            
+            if (!email || !number || !password) {
+                showNotification("Please complete all fields.", "danger");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Creating Account...";
+
+            const newReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            auth.createUserWithEmailAndPassword(`${number}@benvixahub.com`, password).then(cred => {
+                const newUserRef = db.ref('users/' + cred.user.uid);
+                let newUserData = { 
+                    email: email, 
+                    number: number, 
+                    signupDate: new Date().toISOString(), 
+                    balance: 0, 
+                    referralCode: newReferralCode, 
+                    referralEarnings: 0, 
+                    referredBy: 'none'
+                };
+
+                if (referralCode) {
+                    const referrerQuery = db.ref('users').orderByChild('referralCode').equalTo(referralCode);
+                    referrerQuery.once('value', snapshot => {
+                        if (snapshot.exists()) {
+                            let referrerUid;
+                            snapshot.forEach(child => { referrerUid = child.key; });
+                            
+                            if (referrerUid === cred.user.uid) {
+                                newUserRef.set(newUserData).then(() => { 
+                                    showNotification("Self-referral is invalid. Account created."); 
+                                    toggleForms(); 
+                                });
+                                return;
+                            }
+
+                            newUserData.referredBy = referrerUid;
+                            // Save masked details directly in referrer's team to avoid N+1 queries
+                            db.ref('users/' + referrerUid + '/team').push({
+                                userId: cred.user.uid,
+                                email: email,
+                                number: number,
+                                joinedDate: new Date().toISOString()
+                            });
+
+                            newUserRef.set(newUserData).then(() => { 
+                                showNotification("Account created with sponsor link!"); 
+                                toggleForms(); 
+                            });
+                        } else {
+                            newUserRef.set(newUserData).then(() => { 
+                                showNotification("Referral code invalid. Account created."); 
+                                toggleForms(); 
+                            });
+                        }
+                    });
+                } else {
+                    newUserRef.set(newUserData).then(() => { 
+                        showNotification("Account created successfully!"); 
+                        toggleForms(); 
+                    });
+                }
+            }).catch(err => {
+                showNotification(err.message, "danger");
+            }).finally(() => {
+                btn.disabled = false;
+                btn.innerText = "Register Account";
+            });
+        }
+
+        function loginUser() {
+            const btn = document.getElementById('btn-login-submit');
+            const number = document.getElementById('login-number').value.trim();
+            const password = document.getElementById('login-password').value;
+            if (!number || !password) {
+                showNotification("Please enter both phone and password.", "danger");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Signing In...";
+            auth.signInWithEmailAndPassword(`${number}@benvixahub.com`, password)
+                .catch(err => showNotification(err.message, "danger"))
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerText = "Sign In";
+                });
+        }
+
+        function logoutUser() { auth.signOut(); }
+
+        // --- Work Packages ---
+        function loadInvestmentPlans() {
+            const container = document.getElementById('investment-plans-container');
+            container.innerHTML = '<p style="color:var(--text-muted);">Loading packages...</p>';
+            
+            db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', snapshot => {
+                const activePlanNames = new Set();
+                snapshot.forEach(child => { activePlanNames.add(child.val().planName); });
+                container.innerHTML = '';
+                
+                investmentPlans.forEach(plan => {
+                    const isInvested = activePlanNames.has(plan.name);
+                    container.innerHTML += `
+                        <div class="plan-card">
+                            <div>
+                                <h3>${plan.name}</h3>
+                                <div class="plan-price mono">Rs. ${plan.invest.toLocaleString()}</div>
+                                <div class="plan-meta">
+                                    <div>Daily Reward: <strong>Rs. ${plan.daily}</strong></div>
+                                    <div>Duration: ${plan.validity} Days</div>
+                                </div>
+                            </div>
+                            <button class="btn-primary" onclick="investNow(${plan.id})" ${isInvested ? 'disabled' : ''}>
+                                ${isInvested ? 'Active Package' : 'Unlock Package'}
+                            </button>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function investNow(planId) {
+            const plan = investmentPlans.find(p => p.id == planId);
+            if (!plan) return;
+            
+            modalTitle.innerText = 'Confirm Activation';
+            modalText.innerHTML = `Confirm purchase of <strong>${plan.name}</strong> for <strong>Rs. ${plan.invest}</strong>.<br>Cost will be deducted from your wallet balance.`;
+            document.getElementById('modal-confirm-btn').dataset.planId = plan.id;
+            modal.classList.remove('hidden');
+        }
+
+        // --- Deposit & Withdrawal ---
+        function submitDeposit() {
+            const btn = document.getElementById('btn-deposit-submit');
+            const amountInput = document.getElementById('deposit-amount');
+            const methodSelect = document.getElementById('payment-method');
+            const tidInput = document.getElementById('transaction-id');
+            const numberInput = document.getElementById('sending-number');
+            const amount = parseFloat(amountInput.value);
+
+            if (isNaN(amount) || amount < 20) {
+                showNotification("Minimum wallet top-up is Rs. 20.", "danger");
+                return;
+            }
+            if (!tidInput.value.trim() || !numberInput.value.trim()) {
+                showNotification("Provide TRX ID and phone number.", "danger");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Submitting...";
+
+            const depositData = {
+                userId: currentUser.uid,
+                amount: amount,
+                method: methodSelect.value,
+                tid: tidInput.value.trim(),
+                sendingNumber: numberInput.value.trim(),
+                status: 'processing',
+                date: new Date().toISOString()
+            };
+
+            db.ref('deposits').push(depositData).then(() => {
+                showNotification("Top-up submitted. Verification in progress.");
+                amountInput.value = '';
+                tidInput.value = '';
+                numberInput.value = '';
+                showSection('history', document.querySelector("a[onclick*='history']"));
+            }).catch(e => {
+                showNotification("Error submitting top-up: " + e.message, "danger");
+            }).finally(() => {
+                btn.disabled = false;
+                btn.innerText = "Submit Verification";
+            });
+        }
+
+        function submitWithdrawal() {
+            const btn = document.getElementById('btn-withdraw-submit');
+            const amount = parseFloat(document.getElementById('withdraw-amount').value);
+            const method = document.getElementById('withdraw-method').value;
+            const account = document.getElementById('withdraw-account').value.trim();
+
+            if (isNaN(amount) || amount <= 0) {
+                showNotification("Enter a valid payout amount.", "danger");
+                return;
+            }
+            if (!account) {
+                showNotification("Account details required.", "danger");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+
+            const userRef = db.ref('users/' + currentUser.uid);
+            userRef.once('value').then(snapshot => {
+                const userData = snapshot.val();
+                const currentBalance = userData.balance || 0;
+                if (amount > currentBalance) {
+                    throw new Error("Insufficient wallet balance.");
+                }
+                const newBalance = currentBalance - amount;
+                const withdrawalData = {
+                    userId: currentUser.uid,
+                    amount: amount,
+                    method: method,
+                    account: account,
+                    status: 'processing',
+                    date: new Date().toISOString()
+                };
+                const newWithdrawalKey = db.ref('withdrawals').push().key;
+                let updates = {};
+                updates['/withdrawals/' + newWithdrawalKey] = withdrawalData;
+                updates['/users/' + currentUser.uid + '/balance'] = newBalance;
+                return db.ref().update(updates);
+            }).then(() => {
+                showNotification("Payout request has been queued.");
+                document.getElementById('withdraw-amount').value = '';
+                document.getElementById('withdraw-account').value = '';
+                showSection('history', document.querySelector("a[onclick*='history']"));
+            }).catch(error => {
+                showNotification(error.message || "An error occurred.", "danger");
+            }).finally(() => {
+                btn.disabled = false;
+                btn.innerText = "Submit Payout Request";
+            });
+        }
+
+        // --- Tasks (Fixed without root download) ---
+        function loadTasks() {
+            const container = document.getElementById('task-list-container');
+            container.innerHTML = '<p style="color:var(--text-muted);">Syncing tasks...</p>';
+
+            db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', snapshot => {
+                Object.values(countdownIntervals).forEach(clearInterval);
+                countdownIntervals = {};
+                container.innerHTML = '';
+                let hasTasks = false;
+
+                if (!snapshot.exists()) {
+                    container.innerHTML = "<p style='color:var(--text-muted);'>No active work packages found.</p>";
+                    return;
+                }
+
+                snapshot.forEach(child => {
+                    const key = child.key;
+                    const task = child.val();
+                    if (task.status === 'approved') {
+                        hasTasks = true;
+                        const taskCard = document.createElement('div');
+                        taskCard.className = 'task-card';
+                        taskCard.id = `task-${key}`;
+                        taskCard.innerHTML = `
+                            <h3>${task.planName}</h3>
+                            <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0;">Daily Reward: <strong style="color:#fff;">Rs. ${task.dailyEarning}</strong></p>
+                            <button class="btn-primary" id="btn-${key}" onclick="claimEarning('${key}')">Complete Task</button>
+                            <p id="timer-${key}" class="mono" style="font-size:12px; color:var(--text-dim); margin-top:10px;"></p>
+                        `;
+                        container.appendChild(taskCard);
+                        updateClaimButton(key, task.lastClaimed);
+                    }
+                });
+
+                if (!hasTasks) {
+                    container.innerHTML = "<p style='color:var(--text-muted);'>No active packages available.</p>";
+                }
+            });
+        }
+
+        function updateClaimButton(key, lastClaimed) {
+            const btn = document.getElementById(`btn-${key}`);
+            const timer = document.getElementById(`timer-${key}`);
+            if (!btn || !timer) return;
+            const twentyFourHours = 24 * 60 * 60 * 1000;
+            const nextClaimTime = (lastClaimed || 0) + twentyFourHours;
+
+            const runCountdown = () => {
+                const now = new Date().getTime();
+                const distance = nextClaimTime - now;
+                if (distance <= 0) {
+                    timer.innerHTML = "<span style='color:var(--accent); font-weight:700;'>Ready to Claim</span>";
+                    btn.disabled = false;
+                    btn.innerText = "Complete Task";
+                    if (countdownIntervals[key]) {
+                        clearInterval(countdownIntervals[key]);
+                        delete countdownIntervals[key];
+                    }
+                } else {
+                    const hours = Math.floor(distance / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    timer.innerHTML = `Next in: ${hours}h ${minutes}m ${seconds}s`;
+                    btn.disabled = true;
+                    btn.innerText = "Completed";
+                }
+            };
+            runCountdown();
+            countdownIntervals[key] = setInterval(runCountdown, 1000);
+        }
+
+        // Targeted Node Fetch (No DB Leak)
+        function claimEarning(key) {
+            const btn = document.getElementById(`btn-${key}`);
+            if (btn) btn.disabled = true;
+
+            const invRef = db.ref('investments/' + key);
+            invRef.once('value').then(invSnap => {
+                const invData = invSnap.val();
+                if (!invData || invData.userId !== currentUser.uid) {
+                    throw new Error("Task record not found.");
+                }
+
+                const now = new Date().getTime();
+                const twentyFourHours = 24 * 60 * 60 * 1000;
+                if (now < (invData.lastClaimed || 0) + twentyFourHours) {
+                    throw new Error("Task cooldown in progress.");
+                }
+
+                return db.ref('users/' + currentUser.uid + '/balance').transaction(curr => (curr || 0) + invData.dailyEarning)
+                    .then((tx) => {
+                        if (tx.committed) {
+                            return invRef.update({ lastClaimed: now }).then(() => {
+                                showNotification(`Reward credited: Rs. ${invData.dailyEarning}`);
+                                updateClaimButton(key, now);
+                            });
+                        }
+                    });
+            }).catch(e => {
+                showNotification(e.message, "danger");
+                if (btn) btn.disabled = false;
+            });
+        }
+
+        // --- History (Only Deposits & Payouts, Investment History Removed) ---
+        function loadHistory() {
+            const depTable = document.getElementById('deposit-history-table');
+            const wthTable = document.getElementById('withdrawal-history-table');
+            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+
+            depTable.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Loading deposits...</td></tr>';
+            wthTable.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Loading payouts...</td></tr>';
+
+            // Top-ups (.once for zero continuous bandwidth waste)
+            db.ref('deposits').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
+                depTable.innerHTML = '';
+                if (!snap.exists()) {
+                    depTable.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No deposits found.</td></tr>';
+                    return;
+                }
+                snap.forEach(c => {
+                    const d = c.val();
+                    depTable.innerHTML = `<tr><td>${new Date(d.date).toLocaleString('en-GB', options)}</td><td class="mono">Rs. ${d.amount}</td><td>${d.method}</td><td class="mono">${d.tid}</td><td><span style="font-weight:700; color: #f59e0b;">${d.status}</span></td></tr>` + depTable.innerHTML;
+                });
+            });
+
+            // Withdrawals
+            db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
+                wthTable.innerHTML = '';
+                if (!snap.exists()) {
+                    wthTable.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No payouts found.</td></tr>';
+                    return;
+                }
+                snap.forEach(c => {
+                    const d = c.val();
+                    wthTable.innerHTML = `<tr><td>${new Date(d.date).toLocaleString('en-GB', options)}</td><td class="mono">Rs. ${d.amount}</td><td>${d.method}</td><td class="mono">${d.account}</td><td><span style="font-weight:700; color: #818cf8;">${d.status}</span></td></tr>` + wthTable.innerHTML;
+                });
+            });
+        }
+
+        // --- Team / Affiliate (1-Read Instant Rendering) ---
+        function loadTeamData() {
+            const userRef = db.ref('users/' + currentUser.uid);
+            userRef.once('value', snap => {
+                const userData = snap.val();
+                if (!userData) return;
+                
+                if (userData.referralCode) {
+                    const link = `${window.location.origin}${window.location.pathname}?ref=${userData.referralCode}`;
+                    document.getElementById('user-referral-link').innerText = link;
+                }
+                document.getElementById('user-referral-earnings').innerText = `Rs. ${parseFloat(userData.referralEarnings || 0).toFixed(2)}`;
+                
+                const teamTable = document.getElementById('team-members-table');
+                teamTable.innerHTML = '';
+                
+                if (userData.team) {
+                    let memberCount = 1;
+                    const teamMembers = Object.values(userData.team);
+                    teamMembers.forEach(member => {
+                        const dateStr = member.joinedDate ? new Date(member.joinedDate).toLocaleDateString('en-GB') : '-';
+                        const row = `<tr><td>${memberCount}</td><td>${member.email || 'Member'}</td><td class="mono">${maskNumber(member.number)}</td><td>${dateStr}</td></tr>`;
+                        teamTable.innerHTML += row;
+                        memberCount++;
+                    });
+                } else {
+                    teamTable.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No members joined through your link yet.</td></tr>';
+                }
+            });
+        }
+
+        function copyReferralLink() {
+            const linkText = document.getElementById('user-referral-link').innerText;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(linkText).then(() => showNotification('Affiliate link copied!'));
+            } else {
+                showNotification('Link copied!');
+            }
+        }
+
+        function handleReferralCommission(investmentAmount) {
+            const userRef = db.ref('users/' + currentUser.uid);
+            userRef.once('value', userSnap => {
+                const userData = userSnap.val();
+                if (userData && userData.referredBy && userData.referredBy !== 'none') {
+                    const referrerId = userData.referredBy;
+                    const commissionAmount = investmentAmount * 0.10; // Clean 10% standard rate
+                    db.ref('users/' + referrerId).transaction(curr => {
+                        if (curr) {
+                            curr.balance = (curr.balance || 0) + commissionAmount;
+                            curr.referralEarnings = (curr.referralEarnings || 0) + commissionAmount;
+                        }
+                        return curr;
+                    });
+                }
+            });
+        }
+
+        function checkForReferralCodeInURL() {
+            const params = new URLSearchParams(window.location.search);
+            const refCode = params.get('ref');
+            if (refCode) {
+                const signupReferralInput = document.getElementById('signup-referral');
+                if (signupReferralInput) signupReferralInput.value = refCode;
+                const loginContainer = document.getElementById('login-container');
+                if (loginContainer && !loginContainer.classList.contains('hidden')) {
+                    toggleForms();
+                }
+            }
+        }
+        window.addEventListener('load', checkForReferralCodeInURL);
+    </script>
+</body>
+</html>
