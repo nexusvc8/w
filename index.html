@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Benvixa - Digital Work & Task Hub</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     
     <!-- Icons & Fonts -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -15,31 +16,36 @@
         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
-            --primary-light: rgba(79, 70, 229, 0.12);
-            --accent: #10b981;
-            --accent-hover: #059669;
-            --accent-light: rgba(16, 185, 129, 0.12);
-            --gold: #f59e0b;
-            --gold-light: rgba(245, 158, 11, 0.12);
-            --danger: #ef4444;
-            --danger-light: rgba(239, 68, 68, 0.12);
+            --primary-light: rgba(79, 70, 229, 0.08);
+            --accent: #059669;
+            --accent-hover: #047857;
+            --accent-light: rgba(5, 150, 105, 0.1);
+            --gold: #d97706;
+            --gold-light: rgba(217, 119, 6, 0.1);
+            --danger: #dc2626;
+            --danger-light: rgba(220, 38, 38, 0.1);
             
-            --bg-body: #0b0f19;
-            --surface: #111827;
-            --surface-card: #162032;
-            --surface-hover: #1f2d45;
-            --border: #1f2937;
-            --border-light: rgba(255, 255, 255, 0.08);
+            /* Light Mode Theme */
+            --bg-body: #f1f5f9;
+            --surface: #ffffff;
+            --surface-card: #f8fafc;
+            --surface-hover: #e2e8f0;
+            --border: #e2e8f0;
+            --border-light: rgba(0, 0, 0, 0.06);
             
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
-            --text-dim: #6b7280;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
             
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 18px;
-            --radius-xl: 24px;
+            --radius-xl: 22px;
+            --header-height: 58px;
             --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 14px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.08);
         }
 
         * {
@@ -55,6 +61,7 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
@@ -73,81 +80,116 @@
             font-size: 13.5px;
             font-weight: 700;
             z-index: 99999;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
             transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 8px;
             pointer-events: none;
         }
-        #notification-box.success { background: linear-gradient(135deg, #10b981, #059669); border: 1px solid #34d399; }
+        #notification-box.success { background: linear-gradient(135deg, #059669, #047857); border: 1px solid #34d399; }
         #notification-box.danger { background: linear-gradient(135deg, #ef4444, #dc2626); border: 1px solid #f87171; }
         #notification-box.hidden { top: -80px; opacity: 0; }
 
-        /* Mobile Menu Toggle */
-        #menu-toggle {
-            display: none;
-            position: fixed;
-            top: 14px;
-            left: 14px;
-            z-index: 1100;
-            font-size: 24px;
+        /* App Header (Hidden initially for Login/Signup) */
+        .app-header {
+            height: var(--header-height);
             background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 18px;
+            z-index: 1200;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-btn {
+            background: var(--surface-card);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            width: 44px;
-            height: 44px;
+            border-radius: var(--radius-sm);
+            width: 36px;
+            height: 36px;
             cursor: pointer;
+            display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-main);
-            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+            font-size: 22px;
+            transition: var(--transition);
+        }
+        .menu-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .header-brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 8px rgba(79, 70, 229, 0.2);
+        }
+
+        .brand-name {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.4px;
+        }
+
+        /* Layout Container */
+        .app-layout {
+            display: flex;
+            flex: 1;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
         }
 
         /* Sidebar Navigation */
         .sidebar {
-            width: 260px;
+            width: 250px;
             height: 100%;
             background: var(--surface);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            padding: 22px 14px;
+            padding: 14px 12px;
             transition: var(--transition);
-            z-index: 1050;
+            z-index: 1100;
             flex-shrink: 0;
         }
 
-        .brand-box {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0 8px 20px 8px;
-            border-bottom: 1px solid var(--border);
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: 100%;
+            height: calc(100vh - var(--header-height));
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 1050;
         }
-
-        .brand-icon {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, var(--primary), #818cf8);
-            color: #ffffff;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
-        }
-
-        .brand-title {
-            font-size: 18px;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: -0.5px;
-        }
+        .sidebar-overlay.active { display: block; }
 
         .menu-bar {
-            margin-top: 18px;
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -155,12 +197,12 @@
             overflow-y: auto;
         }
 
-        .menu-links { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+        .menu-links { list-style: none; display: flex; flex-direction: column; gap: 5px; }
         .menu-links li a {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 11px 14px;
+            padding: 10px 14px;
             border-radius: 10px;
             text-decoration: none;
             color: var(--text-muted);
@@ -170,21 +212,21 @@
         }
         .menu-links li a .icon { font-size: 20px; }
         .menu-links li a:hover {
-            background-color: var(--surface-hover);
-            color: #fff;
+            background-color: var(--surface-card);
+            color: var(--primary);
         }
         .menu-links li a.active {
             background: linear-gradient(135deg, var(--primary), var(--primary-hover));
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
 
         /* Main Content Container */
         .main-content {
             flex-grow: 1;
-            height: 100vh;
+            height: 100%;
             overflow-y: auto;
-            padding: 30px;
+            padding: 24px;
             background: var(--bg-body);
         }
 
@@ -192,10 +234,10 @@
             max-width: 960px;
             margin: 0 auto;
             background: var(--surface);
-            padding: 28px;
+            padding: 24px;
             border-radius: var(--radius-xl);
             border: 1px solid var(--border);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            box-shadow: var(--shadow-md);
         }
 
         .section-header {
@@ -204,7 +246,7 @@
         .section-header h2 {
             font-size: 20px;
             font-weight: 800;
-            color: #fff;
+            color: var(--text-main);
             letter-spacing: -0.3px;
         }
         .section-header p {
@@ -217,7 +259,7 @@
         label {
             font-size: 12.5px;
             font-weight: 700;
-            color: var(--text-muted);
+            color: #475569;
             margin-bottom: 6px;
             display: block;
         }
@@ -230,18 +272,19 @@
             border-radius: var(--radius-md);
             font-size: 14px;
             background: var(--surface-card);
-            color: #fff;
+            color: var(--text-main);
             outline: none;
             transition: var(--transition);
         }
         input:focus, select:focus {
+            background: #ffffff;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
         }
 
         button.btn-primary {
             width: 100%;
-            padding: 13px;
+            padding: 12.5px;
             background: linear-gradient(135deg, var(--primary), var(--primary-hover));
             color: #ffffff;
             border: none;
@@ -250,15 +293,15 @@
             font-size: 14.5px;
             font-weight: 700;
             transition: var(--transition);
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.28);
         }
-        button.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
-        button:disabled { background: #374151 !important; color: #9ca3af !important; cursor: not-allowed; transform: none; box-shadow: none; }
+        button.btn-primary:hover { filter: brightness(1.05); transform: translateY(-1px); }
+        button:disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed; transform: none; box-shadow: none; }
 
         /* Dashboard Overview */
         .dash-hero-card {
-            background: linear-gradient(135deg, #1e1b4b 0%, #1e293b 100%);
-            border: 1px solid rgba(99, 102, 241, 0.25);
+            background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+            border: 1px solid rgba(79, 70, 229, 0.3);
             border-radius: var(--radius-lg);
             padding: 24px;
             margin-bottom: 20px;
@@ -267,18 +310,19 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 16px;
+            box-shadow: 0 8px 24px rgba(49, 46, 129, 0.2);
         }
         .dash-hero-bal-title {
             font-size: 12px;
             font-weight: 800;
-            color: #a5b4fc;
+            color: #c7d2fe;
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
         .dash-hero-bal-val {
-            font-size: 34px;
+            font-size: 32px;
             font-weight: 900;
-            color: #fff;
+            color: #ffffff;
             margin: 4px 0 6px;
         }
         .dash-action-buttons {
@@ -297,9 +341,9 @@
             gap: 6px;
             transition: var(--transition);
         }
-        .dash-btn.dep { background: var(--accent); color: #042f1f; }
-        .dash-btn.wth { background: #334155; color: #fff; }
-        .dash-btn:hover { transform: translateY(-2px); filter: brightness(1.15); }
+        .dash-btn.dep { background: #10b981; color: #ffffff; }
+        .dash-btn.wth { background: #475569; color: #ffffff; }
+        .dash-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
         .stats-grid {
             display: grid;
@@ -308,13 +352,14 @@
             margin-bottom: 20px;
         }
         .stat-card {
-            background: var(--surface-card);
+            background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             padding: 18px;
             display: flex;
             flex-direction: column;
             gap: 6px;
+            box-shadow: var(--shadow-sm);
         }
         .stat-card .stat-label {
             font-size: 12px;
@@ -325,14 +370,14 @@
         .stat-card .stat-val {
             font-size: 20px;
             font-weight: 800;
-            color: #fff;
+            color: var(--text-main);
         }
 
-        /* Dismissible Notice Banner */
+        /* Notice Banner */
         .notice-banner {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.25);
-            color: #fbbf24;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #b45309;
             padding: 12px 16px;
             border-radius: var(--radius-md);
             margin-bottom: 20px;
@@ -345,9 +390,9 @@
 
         /* WhatsApp Card */
         .whatsapp-card {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 78, 59, 0.25));
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #34d399;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid #a7f3d0;
+            color: #047857;
             padding: 14px 18px;
             border-radius: var(--radius-md);
             margin-top: 20px;
@@ -357,7 +402,7 @@
             text-decoration: none;
             transition: var(--transition);
         }
-        .whatsapp-card:hover { transform: translateY(-2px); border-color: #34d399; }
+        .whatsapp-card:hover { transform: translateY(-2px); border-color: #059669; }
 
         /* Work Packages & Tasks */
         .investment-plans, .task-list {
@@ -366,7 +411,7 @@
             gap: 16px;
         }
         .plan-card, .task-card {
-            background: var(--surface-card);
+            background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: 20px;
@@ -375,21 +420,23 @@
             flex-direction: column;
             justify-content: space-between;
             transition: var(--transition);
+            box-shadow: var(--shadow-sm);
         }
         .plan-card:hover, .task-card:hover {
             border-color: var(--primary);
             transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
         .plan-card h3, .task-card h3 {
             font-size: 16px;
             font-weight: 700;
-            color: #fff;
+            color: var(--text-main);
             margin-bottom: 6px;
         }
         .plan-price {
             font-size: 26px;
             font-weight: 900;
-            color: #818cf8;
+            color: var(--primary);
             margin: 8px 0;
         }
         .plan-meta {
@@ -399,7 +446,7 @@
             line-height: 1.6;
         }
 
-        /* Modern Tables */
+        /* Tables */
         .table-wrap {
             overflow-x: auto;
             border-radius: var(--radius-md);
@@ -427,7 +474,7 @@
             color: var(--text-main);
         }
         tr:last-child td { border-bottom: none; }
-        tr:hover td { background: var(--surface-hover); }
+        tr:hover td { background: var(--surface-card); }
 
         /* Referral Box */
         .referral-box {
@@ -456,8 +503,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(6px);
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
             z-index: 10000;
             display: flex;
             justify-content: center;
@@ -475,275 +522,288 @@
             width: 90%;
             max-width: 400px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
         }
         .modal-buttons {
             display: flex;
             gap: 10px;
             margin-top: 18px;
         }
-        .modal-btn.cancel { background: #374151; color: #fff; }
+        .modal-btn.cancel { background: #94a3b8; color: #fff; }
 
         @media (max-width: 860px) {
-            #menu-toggle { display: flex; }
             .sidebar {
                 position: fixed;
-                left: -280px;
-                top: 0;
-                height: 100%;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+                left: -270px;
+                top: var(--header-height);
+                height: calc(100% - var(--header-height));
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             }
             .sidebar.open { left: 0; }
-            .main-content { padding: 75px 14px 24px 14px; }
+            .main-content { padding: 16px; }
             .content-section { padding: 18px; }
-            .dash-hero-bal-val { font-size: 28px; }
+            .dash-hero-bal-val { font-size: 26px; }
         }
     </style>
 </head>
 <body>
 
     <div id="notification-box" class="hidden"></div>
-    <div id="menu-toggle" class="hidden"><i class='bx bx-menu'></i></div>
 
-    <!-- Sidebar Navigation -->
-    <nav class="sidebar">
-        <div class="brand-box">
-            <div class="brand-icon"><i class='bx bx-briefcase-alt-2'></i></div>
-            <span class="brand-title">Benvixa Hub</span>
-        </div>
-        <div class="menu-bar">
-            <ul class="menu-links">
-                <li><a href="#" class="active" onclick="showSection('home', this)"><i class='bx bx-grid-alt icon'></i><span>Overview</span></a></li>
-                <li><a href="#" onclick="showSection('deposit', this)"><i class='bx bx-wallet icon'></i><span>Add Funds</span></a></li>
-                <li><a href="#" onclick="showSection('invest', this)"><i class='bx bx-layer icon'></i><span>Work Packages</span></a></li>
-                <li><a href="#" onclick="showSection('task', this)"><i class='bx bx-check-shield icon'></i><span>Daily Tasks</span></a></li>
-                <li><a href="#" onclick="showSection('send', this)"><i class='bx bx-money-withdraw icon'></i><span>Payout Request</span></a></li>
-                <li><a href="#" onclick="showSection('history', this)"><i class='bx bx-receipt icon'></i><span>Activity History</span></a></li>
-                <li><a href="#" onclick="showSection('team', this)"><i class='bx bx-group icon'></i><span>Affiliate Team</span></a></li>
-                <li><a href="#" onclick="showSection('profile', this)"><i class='bx bx-user icon'></i><span>My Account</span></a></li>
-                <li><a href="#" onclick="logoutUser()"><i class='bx bx-log-out icon'></i><span>Sign Out</span></a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Main Workspace -->
-    <section class="main-content">
-        <!-- Auth Section (Pre-rendered for zero flash) -->
-        <div id="auth-section" style="max-width: 420px; margin: 40px auto;">
-            <div id="login-container" class="content-section">
-                <div class="section-header" style="text-align: center;">
-                    <h2>Welcome to Benvixa Hub</h2>
-                    <p>Sign in to access your digital workspace</p>
-                </div>
-                <label>Phone Number</label>
-                <input type="tel" id="login-number" inputmode="numeric" placeholder="03XXXXXXXXX">
-                <label>Password</label>
-                <input type="password" id="login-password" placeholder="••••••••">
-                <button class="btn-primary" id="btn-login-submit" onclick="loginUser()">Sign In</button>
-                <p style="text-align:center; margin-top:18px; font-size:13.5px; color:var(--text-muted);">
-                    Don't have an account? <a href="#" onclick="toggleForms()" style="color:var(--primary); font-weight:700; text-decoration:none;">Create Account</a>
-                </p>
-            </div>
-
-            <div id="signup-container" class="content-section hidden">
-                <div class="section-header" style="text-align: center;">
-                    <h2>Create Member Account</h2>
-                    <p>Join the digital work network</p>
-                </div>
-                <label>Email Address</label>
-                <input type="email" id="signup-email" placeholder="name@example.com">
-                <label>Phone Number</label>
-                <input type="tel" id="signup-number" inputmode="numeric" placeholder="03XXXXXXXXX">
-                <label>Password</label>
-                <input type="password" id="signup-password" placeholder="Create strong password">
-                <label>Referral Sponsor ID (Optional)</label>
-                <input type="text" id="signup-referral" placeholder="Sponsor Code">
-                <button class="btn-primary" id="btn-signup-submit" onclick="signupUser()">Register Account</button>
-                <p style="text-align:center; margin-top:18px; font-size:13.5px; color:var(--text-muted);">
-                    Already registered? <a href="#" onclick="toggleForms()" style="color:var(--primary); font-weight:700; text-decoration:none;">Sign In</a>
-                </p>
+    <!-- Header (Hidden on Login/Signup via 'hidden' class, shown after login) -->
+    <header class="app-header hidden" id="app-header">
+        <div class="header-left">
+            <button class="menu-btn" id="menu-toggle" aria-label="Toggle Sidebar">
+                <i class='bx bx-menu'></i>
+            </button>
+            <div class="header-brand-wrap">
+                <img src="https://i.ibb.co/NgxZd8Sx/image.png" alt="Logo" class="header-logo" onerror="this.src='https://via.placeholder.com/38'">
+                <span class="brand-name">Benvixa</span>
             </div>
         </div>
+    </header>
 
-        <!-- Dashboard Container (Pre-rendered in DOM) -->
-        <div id="dashboard-container" class="hidden">
-            <!-- Overview Section -->
-            <div id="home-content" class="content-section">
-                <div id="system-notice" class="notice-banner">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <i class='bx bx-info-circle' style="font-size:18px;"></i>
-                        <span>System update: Fast 24-hour payouts and instant task verification active.</span>
+    <div class="app-layout">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Sidebar Navigation (No Brand Logo or Name inside) -->
+        <nav class="sidebar hidden" id="main-sidebar">
+            <div class="menu-bar">
+                <ul class="menu-links">
+                    <li><a href="#" class="active" onclick="showSection('home', this)"><i class='bx bx-grid-alt icon'></i><span>Overview</span></a></li>
+                    <li><a href="#" onclick="showSection('deposit', this)"><i class='bx bx-wallet icon'></i><span>Add Funds</span></a></li>
+                    <li><a href="#" onclick="showSection('invest', this)"><i class='bx bx-layer icon'></i><span>Work Packages</span></a></li>
+                    <li><a href="#" onclick="showSection('task', this)"><i class='bx bx-check-shield icon'></i><span>Daily Tasks</span></a></li>
+                    <li><a href="#" onclick="showSection('send', this)"><i class='bx bx-money-withdraw icon'></i><span>Payout Request</span></a></li>
+                    <li><a href="#" onclick="showSection('history', this)"><i class='bx bx-receipt icon'></i><span>Activity History</span></a></li>
+                    <li><a href="#" onclick="showSection('team', this)"><i class='bx bx-group icon'></i><span>Affiliate Team</span></a></li>
+                    <li><a href="#" onclick="showSection('profile', this)"><i class='bx bx-user icon'></i><span>My Account</span></a></li>
+                    <li><a href="#" onclick="logoutUser()"><i class='bx bx-log-out icon'></i><span>Sign Out</span></a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Workspace -->
+        <section class="main-content">
+            <!-- Auth Section -->
+            <div id="auth-section" style="max-width: 420px; margin: 50px auto;">
+                <div id="login-container" class="content-section">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img src="https://i.ibb.co/NgxZd8Sx/image.png" alt="Logo" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); margin-bottom: 8px;">
+                        <h2 style="font-size: 22px; font-weight: 800; color: var(--text-main);">Sign in to Benvixa</h2>
+                        <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Access your digital workspace</p>
                     </div>
-                    <i class='bx bx-x' style="cursor:pointer; font-size:18px;" onclick="document.getElementById('system-notice').style.display='none'"></i>
+                    <label>Phone Number</label>
+                    <input type="tel" id="login-number" inputmode="numeric" placeholder="03XXXXXXXXX">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••">
+                    <button class="btn-primary" id="btn-login-submit" onclick="loginUser()">Sign In</button>
+                    <p style="text-align:center; margin-top:18px; font-size:13.5px; color:var(--text-muted);">
+                        Don't have an account? <a href="#" onclick="toggleForms()" style="color:var(--primary); font-weight:700; text-decoration:none;">Create Account</a>
+                    </p>
                 </div>
 
-                <!-- Upgraded Dashboard Hero -->
-                <div class="dash-hero-card">
-                    <div>
-                        <span class="dash-hero-bal-title">Available Wallet Balance</span>
-                        <div class="dash-hero-bal-val mono" id="current-balance">Rs. 0.00</div>
-                        <span style="font-size:12px; color:var(--text-muted);">Account: <strong id="user-email-display" style="color:#fff;">-</strong></span>
+                <div id="signup-container" class="content-section hidden">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img src="https://i.ibb.co/NgxZd8Sx/image.png" alt="Logo" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); margin-bottom: 8px;">
+                        <h2 style="font-size: 22px; font-weight: 800; color: var(--text-main);">Create Member Account</h2>
+                        <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Join the digital work network</p>
                     </div>
-                    <div class="dash-action-buttons">
-                        <button class="dash-btn dep" onclick="showSection('deposit', document.querySelector('a[onclick*=\'deposit\']'))"><i class='bx bx-plus-circle'></i> Add Funds</button>
-                        <button class="dash-btn wth" onclick="showSection('send', document.querySelector('a[onclick*=\'send\']'))"><i class='bx bx-money-withdraw'></i> Payout</button>
-                    </div>
+                    <label>Email Address</label>
+                    <input type="email" id="signup-email" placeholder="name@example.com">
+                    <label>Phone Number</label>
+                    <input type="tel" id="signup-number" inputmode="numeric" placeholder="03XXXXXXXXX">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="Create strong password">
+                    <label>Referral Sponsor ID (Optional)</label>
+                    <input type="text" id="signup-referral" placeholder="Sponsor Code">
+                    <button class="btn-primary" id="btn-signup-submit" onclick="signupUser()">Register Account</button>
+                    <p style="text-align:center; margin-top:18px; font-size:13.5px; color:var(--text-muted);">
+                        Already registered? <a href="#" onclick="toggleForms()" style="color:var(--primary); font-weight:700; text-decoration:none;">Sign In</a>
+                    </p>
                 </div>
+            </div>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-label">Active Work Packages</span>
-                        <div class="stat-val mono" id="dash-active-packages">0</div>
+            <!-- Dashboard Container -->
+            <div id="dashboard-container" class="hidden">
+                <!-- Overview Section -->
+                <div id="home-content" class="content-section">
+                    <div id="system-notice" class="notice-banner">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <i class='bx bx-info-circle' style="font-size:18px;"></i>
+                            <span>System update: Fast 24-hour payouts and instant task verification active.</span>
+                        </div>
+                        <i class='bx bx-x' style="cursor:pointer; font-size:18px;" onclick="document.getElementById('system-notice').style.display='none'"></i>
                     </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Affiliate Commission</span>
-                        <div class="stat-val mono" id="dash-affiliate-earnings" style="color:var(--accent);">Rs. 0.00</div>
-                    </div>
-                </div>
 
-                <a href="https://wa.me/923262550724" target="_blank" class="whatsapp-card">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <i class='bx bxl-whatsapp' style="font-size: 32px;"></i>
+                    <!-- Dashboard Hero -->
+                    <div class="dash-hero-card">
                         <div>
-                            <h4 style="margin:0; font-size:14.5px; font-weight:700;">Official Support Desk</h4>
-                            <p style="margin:0; font-size:12px; opacity:0.85;">Need instant help with deposits or tasks? Chat on WhatsApp</p>
+                            <span class="dash-hero-bal-title">Available Wallet Balance</span>
+                            <div class="dash-hero-bal-val mono" id="current-balance">Rs. 0.00</div>
+                            <span style="font-size:12px; color:#cbd5e1;">Account: <strong id="user-email-display" style="color:#fff;">-</strong></span>
+                        </div>
+                        <div class="dash-action-buttons">
+                            <button class="dash-btn dep" onclick="showSection('deposit', document.querySelector('a[onclick*=\'deposit\']'))"><i class='bx bx-plus-circle'></i> Add Funds</button>
+                            <button class="dash-btn wth" onclick="showSection('send', document.querySelector('a[onclick*=\'send\']'))"><i class='bx bx-money-withdraw'></i> Payout</button>
                         </div>
                     </div>
-                    <i class='bx bx-chevron-right' style="font-size: 22px;"></i>
-                </a>
-            </div>
 
-            <!-- Add Funds / Deposit -->
-            <div id="deposit-content" class="content-section hidden">
-                <div class="section-header">
-                    <h2>Add Funds to Wallet</h2>
-                    <p>Transfer amount to <strong>03262550724</strong> (Easypaisa / JazzCash) and submit details.</p>
-                </div>
-                <label>Amount (PKR)</label>
-                <input type="number" id="deposit-amount" inputmode="decimal" placeholder="Minimum Rs. 20">
-                <label>Payment Channel</label>
-                <select id="payment-method">
-                    <option>Easypaisa</option>
-                    <option>Jazzcash</option>
-                </select>
-                <label>Transaction ID (TRX ID)</label>
-                <input type="text" id="transaction-id" inputmode="numeric" placeholder="e.g. 8472910382">
-                <label>Sender Account / Phone Number</label>
-                <input type="tel" id="sending-number" inputmode="numeric" placeholder="e.g. 03001234567">
-                <button class="btn-primary" id="btn-deposit-submit" onclick="submitDeposit()">Submit Verification</button>
-            </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-label">Active Work Packages</span>
+                            <div class="stat-val mono" id="dash-active-packages">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Affiliate Commission</span>
+                            <div class="stat-val mono" id="dash-affiliate-earnings" style="color:var(--accent);">Rs. 0.00</div>
+                        </div>
+                    </div>
 
-            <!-- Work Packages -->
-            <div id="invest-content" class="content-section hidden">
-                <div class="section-header">
-                    <h2>Work & Task Packages</h2>
-                    <p>Select your tier to unlock daily tasks and rewards.</p>
-                </div>
-                <div id="investment-plans-container" class="investment-plans"></div>
-            </div>
-
-            <!-- Daily Tasks -->
-            <div id="task-content" class="content-section hidden">
-                <div class="section-header">
-                    <h2>Daily Task Activities</h2>
-                    <p>Review and confirm your active task rewards daily.</p>
-                </div>
-                <div id="task-list-container" class="task-list"></div>
-            </div>
-
-            <!-- Payout Section -->
-            <div id="send-content" class="content-section hidden">
-                <div class="section-header">
-                    <h2>Request Payout</h2>
-                    <p>Transfer your accumulated task rewards to your mobile wallet.</p>
-                </div>
-                <label>Payout Amount (PKR)</label>
-                <input type="number" id="withdraw-amount" inputmode="decimal" placeholder="Amount">
-                <label>Payout Method</label>
-                <select id="withdraw-method">
-                    <option>Easypaisa</option>
-                    <option>Jazzcash</option>
-                </select>
-                <label>Account Number / Mobile Number</label>
-                <input type="tel" id="withdraw-account" inputmode="numeric" placeholder="Account Number">
-                <button class="btn-primary" id="btn-withdraw-submit" onclick="submitWithdrawal()">Submit Payout Request</button>
-
-                <div style="margin-top: 20px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background-color: var(--surface-card);">
-                    <h4 style="margin-bottom: 6px; font-size:13.5px; font-weight:700; color: #fff;">Payout Schedule</h4>
-                    <p style="font-size: 12.5px; color: var(--text-muted);">• Operating hours: 9:00 AM – 11:00 PM daily.</p>
-                    <p style="font-size: 12.5px; color: var(--danger); margin-top: 4px;">• Double check account details before submission.</p>
-                </div>
-            </div>
-
-            <!-- History (Investment History Completely Removed as Requested) -->
-            <div id="history-content" class="content-section hidden">
-                <div class="section-header">
-                    <h2>Activity History</h2>
-                    <p>Ledger of wallet deposits and payout requests.</p>
+                    <a href="https://wa.me/923262550724" target="_blank" class="whatsapp-card">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <i class='bx bxl-whatsapp' style="font-size: 32px;"></i>
+                            <div>
+                                <h4 style="margin:0; font-size:14.5px; font-weight:700;">Official Support Desk</h4>
+                                <p style="margin:0; font-size:12px; opacity:0.85;">Need instant help with deposits or tasks? Chat on WhatsApp</p>
+                            </div>
+                        </div>
+                        <i class='bx bx-chevron-right' style="font-size: 22px;"></i>
+                    </a>
                 </div>
 
-                <h3 style="font-size: 15px; margin: 16px 0 8px 0; color:#fff;">Deposits (Top-ups)</h3>
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th>Timestamp</th><th>Amount</th><th>Method</th><th>Trx ID</th><th>Status</th></tr></thead>
-                        <tbody id="deposit-history-table"></tbody>
-                    </table>
+                <!-- Add Funds / Deposit -->
+                <div id="deposit-content" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Add Funds to Wallet</h2>
+                        <p>Transfer amount to <strong>03262550724</strong> (Easypaisa / JazzCash) and submit details.</p>
+                    </div>
+                    <label>Amount (PKR)</label>
+                    <input type="number" id="deposit-amount" inputmode="decimal" placeholder="Minimum Rs. 20">
+                    <label>Payment Channel</label>
+                    <select id="payment-method">
+                        <option>Easypaisa</option>
+                        <option>Jazzcash</option>
+                    </select>
+                    <label>Transaction ID (TRX ID)</label>
+                    <input type="text" id="transaction-id" inputmode="numeric" placeholder="e.g. 8472910382">
+                    <label>Sender Account / Phone Number</label>
+                    <input type="tel" id="sending-number" inputmode="numeric" placeholder="e.g. 03001234567">
+                    <button class="btn-primary" id="btn-deposit-submit" onclick="submitDeposit()">Submit Verification</button>
                 </div>
 
-                <h3 style="font-size: 15px; margin: 24px 0 8px 0; color:#fff;">Payouts (Withdrawals)</h3>
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th>Timestamp</th><th>Amount</th><th>Method</th><th>Destination</th><th>Status</th></tr></thead>
-                        <tbody id="withdrawal-history-table"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Team / Affiliate -->
-            <div id="team-content" class="content-section hidden">
-                <div class="section-header">
-                    <h2>Affiliate & Team Portal</h2>
-                    <p>Share your personal invite link to earn commissions.</p>
+                <!-- Work Packages -->
+                <div id="invest-content" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Work & Task Packages</h2>
+                        <p>Select your tier to unlock daily tasks and rewards.</p>
+                    </div>
+                    <div id="investment-plans-container" class="investment-plans"></div>
                 </div>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-label">Total Commission Earned</span>
-                        <div class="stat-val mono" id="user-referral-earnings" style="color: var(--accent);">Rs. 0.00</div>
+                <!-- Daily Tasks -->
+                <div id="task-content" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Daily Task Activities</h2>
+                        <p>Review and confirm your active task rewards daily.</p>
+                    </div>
+                    <div id="task-list-container" class="task-list"></div>
+                </div>
+
+                <!-- Payout Section -->
+                <div id="send-content" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Request Payout</h2>
+                        <p>Transfer your accumulated task rewards to your mobile wallet.</p>
+                    </div>
+                    <label>Payout Amount (PKR)</label>
+                    <input type="number" id="withdraw-amount" inputmode="decimal" placeholder="Amount">
+                    <label>Payout Method</label>
+                    <select id="withdraw-method">
+                        <option>Easypaisa</option>
+                        <option>Jazzcash</option>
+                    </select>
+                    <label>Account Number / Mobile Number</label>
+                    <input type="tel" id="withdraw-account" inputmode="numeric" placeholder="Account Number">
+                    <button class="btn-primary" id="btn-withdraw-submit" onclick="submitWithdrawal()">Submit Payout Request</button>
+
+                    <div style="margin-top: 20px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background-color: var(--surface-card);">
+                        <h4 style="margin-bottom: 6px; font-size:13.5px; font-weight:700; color: var(--text-main);">Payout Schedule</h4>
+                        <p style="font-size: 12.5px; color: var(--text-muted);">• Operating hours: 9:00 AM – 11:00 PM daily.</p>
+                        <p style="font-size: 12.5px; color: var(--danger); margin-top: 4px;">• Double check account details before submission.</p>
                     </div>
                 </div>
 
-                <div style="margin-top: 10px;">
-                    <label>Your Personal Referral Link</label>
-                    <div class="referral-box">
-                        <span id="user-referral-link" class="mono" style="font-size:12.5px; color:var(--text-main);">- - -</span>
-                        <button class="btn-primary" onclick="copyReferralLink()">Copy Link</button>
+                <!-- History -->
+                <div id="history-content" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Activity History</h2>
+                        <p>Ledger of wallet deposits and payout requests.</p>
+                    </div>
+
+                    <h3 style="font-size: 15px; margin: 16px 0 8px 0; color:var(--text-main);">Deposits (Top-ups)</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Timestamp</th><th>Amount</th><th>Method</th><th>Trx ID</th><th>Status</th></tr></thead>
+                            <tbody id="deposit-history-table"></tbody>
+                        </table>
+                    </div>
+
+                    <h3 style="font-size: 15px; margin: 24px 0 8px 0; color:var(--text-main);">Payouts (Withdrawals)</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Timestamp</th><th>Amount</th><th>Method</th><th>Destination</th><th>Status</th></tr></thead>
+                            <tbody id="withdrawal-history-table"></tbody>
+                        </table>
                     </div>
                 </div>
 
-                <h3 style="font-size: 15px; margin: 24px 0 8px 0; color:#fff;">Direct Team Members</h3>
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th>#</th><th>Member Email</th><th>Contact</th><th>Joined</th></tr></thead>
-                        <tbody id="team-members-table"><tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Syncing team...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
+                <!-- Team / Affiliate -->
+                <div id="team-content" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Affiliate & Team Portal</h2>
+                        <p>Share your personal invite link to earn commissions.</p>
+                    </div>
 
-            <!-- Profile -->
-            <div id="profile-content" class="content-section hidden">
-                <div class="section-header">
-                    <h2>Account Profile</h2>
-                    <p>Personal credentials and registration info</p>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-label">Total Commission Earned</span>
+                            <div class="stat-val mono" id="user-referral-earnings" style="color: var(--accent);">Rs. 0.00</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <label>Your Personal Referral Link</label>
+                        <div class="referral-box">
+                            <span id="user-referral-link" class="mono" style="font-size:12.5px; color:var(--text-main);">- - -</span>
+                            <button class="btn-primary" onclick="copyReferralLink()">Copy Link</button>
+                        </div>
+                    </div>
+
+                    <h3 style="font-size: 15px; margin: 24px 0 8px 0; color:var(--text-main);">Direct Team Members</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>#</th><th>Member Email</th><th>Contact</th><th>Joined</th></tr></thead>
+                            <tbody id="team-members-table"><tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Syncing team...</td></tr></tbody>
+                        </table>
+                    </div>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:14px; font-size:13.5px;">
-                    <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Email:</strong> <span id="profile-email">-</span></div>
-                    <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Phone:</strong> <span id="profile-number">-</span></div>
-                    <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Member Since:</strong> <span id="profile-signup-date">-</span></div>
+
+                <!-- Profile -->
+                <div id="profile-content" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Account Profile</h2>
+                        <p>Personal credentials and registration info</p>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:14px; font-size:13.5px;">
+                        <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Email:</strong> <span id="profile-email">-</span></div>
+                        <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Phone:</strong> <span id="profile-number">-</span></div>
+                        <div><strong style="color:var(--text-muted); display:inline-block; width:130px;">Member Since:</strong> <span id="profile-signup-date">-</span></div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="modal-overlay hidden">
@@ -814,11 +874,20 @@
             { id: 32, name: "Tier 32 Task Pack", invest: 9000, daily: 642.9, validity: 60 }
         ];
 
-        const sidebar = document.querySelector('.sidebar');
+        const appHeader = document.getElementById('app-header');
+        const sidebar = document.getElementById('main-sidebar');
         const menuToggle = document.getElementById('menu-toggle');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
         const authContainer = document.getElementById('auth-section');
         const dashboardContainer = document.getElementById('dashboard-container');
-        menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('active');
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
 
         // Online/Offline Listeners
         window.addEventListener('offline', () => showNotification("Internet connection lost.", "danger"));
@@ -835,16 +904,25 @@
                 currentUser = user;
                 authContainer.classList.add('hidden');
                 dashboardContainer.classList.remove('hidden');
-                menuToggle.classList.remove('hidden');
+                
+                // Show Header & Sidebar once logged in
+                appHeader.classList.remove('hidden');
+                sidebar.classList.remove('hidden');
+
                 setupModalListener();
                 showSection('home', document.querySelector('.sidebar a'));
-                loadUserData(); // Only initial user data loaded
+                loadUserData();
             } else {
                 currentUser = null;
                 authContainer.classList.remove('hidden');
                 dashboardContainer.classList.add('hidden');
-                menuToggle.classList.add('hidden');
-                if (sidebar.classList.contains('open')) sidebar.classList.remove('open');
+                
+                // Hide Header & Sidebar completely on Login / Signup page
+                appHeader.classList.add('hidden');
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+
                 Object.values(countdownIntervals).forEach(clearInterval);
                 countdownIntervals = {};
                 checkForReferralCodeInURL();
@@ -918,16 +996,14 @@
             setTimeout(() => { notificationBox.classList.add('hidden'); }, 3200);
         }
 
-        // Lazy Loader inside showSection
         function showSection(sectionId, navLink) {
             document.querySelectorAll('#dashboard-container > div').forEach(s => s.classList.add('hidden'));
             const targetSection = document.getElementById(sectionId + '-content');
             if (targetSection) targetSection.classList.remove('hidden');
             document.querySelectorAll('.sidebar .menu-links a').forEach(a => a.classList.remove('active'));
             if(navLink) navLink.classList.add('active');
-            if (window.innerWidth <= 860 && sidebar.classList.contains('open')) sidebar.classList.remove('open');
+            if (window.innerWidth <= 860 && sidebar.classList.contains('open')) toggleSidebar();
 
-            // Lazy Load data on tab click
             if (sectionId === 'invest') loadInvestmentPlans();
             if (sectionId === 'task') loadTasks();
             if (sectionId === 'history') loadHistory();
@@ -958,7 +1034,6 @@
                 }
             });
 
-            // Count Active Packages for Dashboard Hero
             db.ref('investments').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
                 let count = 0;
                 snap.forEach(() => count++);
@@ -1011,7 +1086,6 @@
                             }
 
                             newUserData.referredBy = referrerUid;
-                            // Save masked details directly in referrer's team to avoid N+1 queries
                             db.ref('users/' + referrerUid + '/team').push({
                                 userId: cred.user.uid,
                                 email: email,
@@ -1203,7 +1277,7 @@
             });
         }
 
-        // --- Tasks (Fixed without root download) ---
+        // --- Tasks ---
         function loadTasks() {
             const container = document.getElementById('task-list-container');
             container.innerHTML = '<p style="color:var(--text-muted);">Syncing tasks...</p>';
@@ -1229,7 +1303,7 @@
                         taskCard.id = `task-${key}`;
                         taskCard.innerHTML = `
                             <h3>${task.planName}</h3>
-                            <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0;">Daily Reward: <strong style="color:#fff;">Rs. ${task.dailyEarning}</strong></p>
+                            <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0;">Daily Reward: <strong style="color:var(--text-main);">Rs. ${task.dailyEarning}</strong></p>
                             <button class="btn-primary" id="btn-${key}" onclick="claimEarning('${key}')">Complete Task</button>
                             <p id="timer-${key}" class="mono" style="font-size:12px; color:var(--text-dim); margin-top:10px;"></p>
                         `;
@@ -1275,7 +1349,6 @@
             countdownIntervals[key] = setInterval(runCountdown, 1000);
         }
 
-        // Targeted Node Fetch (No DB Leak)
         function claimEarning(key) {
             const btn = document.getElementById(`btn-${key}`);
             if (btn) btn.disabled = true;
@@ -1308,7 +1381,7 @@
             });
         }
 
-        // --- History (Only Deposits & Payouts, Investment History Removed) ---
+        // --- History ---
         function loadHistory() {
             const depTable = document.getElementById('deposit-history-table');
             const wthTable = document.getElementById('withdrawal-history-table');
@@ -1317,7 +1390,6 @@
             depTable.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Loading deposits...</td></tr>';
             wthTable.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Loading payouts...</td></tr>';
 
-            // Top-ups (.once for zero continuous bandwidth waste)
             db.ref('deposits').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
                 depTable.innerHTML = '';
                 if (!snap.exists()) {
@@ -1326,11 +1398,10 @@
                 }
                 snap.forEach(c => {
                     const d = c.val();
-                    depTable.innerHTML = `<tr><td>${new Date(d.date).toLocaleString('en-GB', options)}</td><td class="mono">Rs. ${d.amount}</td><td>${d.method}</td><td class="mono">${d.tid}</td><td><span style="font-weight:700; color: #f59e0b;">${d.status}</span></td></tr>` + depTable.innerHTML;
+                    depTable.innerHTML = `<tr><td>${new Date(d.date).toLocaleString('en-GB', options)}</td><td class="mono">Rs. ${d.amount}</td><td>${d.method}</td><td class="mono">${d.tid}</td><td><span style="font-weight:700; color: #d97706;">${d.status}</span></td></tr>` + depTable.innerHTML;
                 });
             });
 
-            // Withdrawals
             db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).once('value', snap => {
                 wthTable.innerHTML = '';
                 if (!snap.exists()) {
@@ -1339,12 +1410,12 @@
                 }
                 snap.forEach(c => {
                     const d = c.val();
-                    wthTable.innerHTML = `<tr><td>${new Date(d.date).toLocaleString('en-GB', options)}</td><td class="mono">Rs. ${d.amount}</td><td>${d.method}</td><td class="mono">${d.account}</td><td><span style="font-weight:700; color: #818cf8;">${d.status}</span></td></tr>` + wthTable.innerHTML;
+                    wthTable.innerHTML = `<tr><td>${new Date(d.date).toLocaleString('en-GB', options)}</td><td class="mono">Rs. ${d.amount}</td><td>${d.method}</td><td class="mono">${d.account}</td><td><span style="font-weight:700; color: #4f46e5;">${d.status}</span></td></tr>` + wthTable.innerHTML;
                 });
             });
         }
 
-        // --- Team / Affiliate (1-Read Instant Rendering) ---
+        // --- Team / Affiliate ---
         function loadTeamData() {
             const userRef = db.ref('users/' + currentUser.uid);
             userRef.once('value', snap => {
@@ -1390,7 +1461,7 @@
                 const userData = userSnap.val();
                 if (userData && userData.referredBy && userData.referredBy !== 'none') {
                     const referrerId = userData.referredBy;
-                    const commissionAmount = investmentAmount * 0.10; // Clean 10% standard rate
+                    const commissionAmount = investmentAmount * 0.10;
                     db.ref('users/' + referrerId).transaction(curr => {
                         if (curr) {
                             curr.balance = (curr.balance || 0) + commissionAmount;
